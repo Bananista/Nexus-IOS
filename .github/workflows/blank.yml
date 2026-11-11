@@ -12,8 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compila Package Swift
-        run: swift build --package-path .
+      - name: Trova e Compila Package Swift
+        run: |
+          DIR=$(dirname "$(find . -name "Package.swift" | head -n 1)")
+          echo "Trovato Package.swift in: $DIR"
+          swift build --package-path "$DIR"
 
       - name: Esegui Test
-        run: swift test --package-path .
+        run: |
+          DIR=$(dirname "$(find . -name "Package.swift" | head -n 1)")
+          swift test --package-path "$DIR"
