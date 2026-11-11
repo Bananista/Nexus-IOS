@@ -12,23 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Trova o Decomprimi Progetto
-        run: |
-          if [ -d "Quaderno-ios-github" ]; then
-            echo "Cartella Quaderno-ios-github già presente."
-          elif ls *.zip 1> /dev/null 2>&1; then
-            ZIP_FILE=$(ls *.zip | head -n 1)
-            echo "Trovato archivio ZIP: $ZIP_FILE, procedo con la decompressione..."
-            unzip -qo "$ZIP_FILE"
-          else
-            echo "Errore: Nessuna cartella Quaderno-ios-github o file ZIP trovato."
-            exit 1
-          fi
-
       - name: Compila Package Swift
-        run: |
-          swift build --package-path Quaderno-ios-github
+        run: swift build --package-path .
 
       - name: Esegui Test
-        run: |
-          swift test --package-path Quaderno-ios-github
+        run: swift test --package-path .
