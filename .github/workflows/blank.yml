@@ -1,4 +1,4 @@
-name: Compila e Verifica iOS
+name: Costruisci APK
 
 on:
   workflow_dispatch:
@@ -7,28 +7,19 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
-
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Trova o Decomprimi Progetto
-        run: |
-          if [ -d "Quaderno-ios-github" ]; then
-            echo "Cartella Quaderno-ios-github già presente."
-          elif ls *.zip 1> /dev/null 2>&1; then
-            ZIP_FILE=$(ls *.zip | head -n 1)
-            echo "Trovato archivio ZIP: $ZIP_FILE, procedo con la decompressione..."
-            unzip -qo "$ZIP_FILE"
-          else
-            echo "Errore: Nessuna cartella Quaderno-ios-github o file ZIP trovato."
-            exit 1
-          fi
-
-      - name: Compila Package Swift
-        run: |
-          swift build --package-path Quaderno-ios-github
-
-      - name: Esegui Test
-        run: |
-          swift test --package-path Quaderno-ios-github
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - run: gradle assembleDebug --no-daemon
+        working-directory: Quaderno-github
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-apk
+          path: Quaderno-github/app/build/outputs/apk/debug/app-debug.apk
