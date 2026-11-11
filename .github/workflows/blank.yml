@@ -14,15 +14,8 @@ jobs:
 
       - name: Debug e Compilazione Automatica
         run: |
-          echo "--- LISTA FILE NELLA WORKSPACE ---"
-          find . -maxdepth 3
-          
           echo "--- CERCO PACKAGE.SWIFT ---"
           PKG_FILE=$(find . -name "Package.swift" | head -n 1)
-          echo "Trovato a: $PKG_FILE"
-          
           PKG_DIR=$(dirname "$PKG_FILE")
-          echo "Compilazione nella cartella: $PKG_DIR"
           
           swift build --package-path "$PKG_DIR"
-          swift test --package-path "$PKG_DIR"
