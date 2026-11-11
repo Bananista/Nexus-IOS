@@ -1,0 +1,22 @@
+name: Compila e Verifica iOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Seleziona Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Compila Package Swift
+        run: swift build --package-path Quaderno-ios-github
+
+      - name: Esegui Test
+        run: swift test --package-path Quaderno-ios-github
