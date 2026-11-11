@@ -12,11 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Seleziona Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+      - name: Decomprimi archivio ZIP
+        run: |
+          ZIP_FILE=$(ls *.zip | head -n 1)
+          echo "Decompressione di $ZIP_FILE..."
+          unzip -qo "$ZIP_FILE"
 
       - name: Compila Package Swift
-        run: swift build --package-path Quaderno-ios-github
+        run: |
+          DIR_NAME=$(find . -maxdepth 1 -type d -name "Quaderno-ios*" | head -n 1)
+          swift build --package-path "$DIR_NAME"
 
       - name: Esegui Test
-        run: swift test --package-path Quaderno-ios-github
+        run: |
+          DIR_NAME=$(find . -maxdepth 1 -type d -name "Quaderno-ios*" | head -n 1)
+          swift test --package-path "$DIR_NAME"
