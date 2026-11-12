@@ -1,0 +1,24 @@
+name: Build iOS
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Genera il progetto Xcode
+        run: brew install xcodegen && xcodegen generate
+      - name: Compila (senza firma)
+        run: |
+          xcodebuild -project Nexus.xcodeproj -scheme Nexus -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+      - name: Crea l'IPA
+        run: |
+          mkdir Payload && cp -R build/Build/Products/Release-iphoneos/Nexus.app Payload/
+          zip -qr Nexus.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-ipa
+          path: Nexus.ipa
