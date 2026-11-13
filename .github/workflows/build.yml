@@ -7,10 +7,13 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Trova il progetto
+      - name: Scompatta lo zip
         run: |
-          F=$(find . -name project.yml -not -path './build/*' | head -1)
-          if [ -z "$F" ]; then echo "project.yml NON caricato nel repository"; ls -R | head -50; exit 1; fi
+          Z=$(ls *.zip 2>/dev/null | head -1)
+          if [ -z "$Z" ]; then echo "Nessuno zip nel repository: caricalo"; exit 1; fi
+          mkdir -p src && unzip -q -o "$Z" -d src
+          F=$(find src -name project.yml | head -1)
+          if [ -z "$F" ]; then echo "project.yml non trovato nello zip"; exit 1; fi
           echo "DIR=$(dirname "$F")" >> $GITHUB_ENV
       - name: Genera il progetto Xcode
         working-directory: ${{ env.DIR }}
